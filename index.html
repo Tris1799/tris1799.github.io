@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Educație rutieră pentru toate vârstele: reguli, animații, indicatoare, situații și test, pentru traficul din România.">
+<title>Ochii pe drum</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800;900&family=Overpass+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: o singură coloană lată de "șosea", secțiuni despărțite de marcaje rutiere; plăcuțe tip indicator doar unde ajută. */
+:root{
+  --bg:#F3F4F1; --surface:#FFFFFF; --surface-2:#E7E9E4; --fg:#1D2023; --muted:#5A6167;
+  --line:#CFD3CD; --asphalt:#2E3236; --asphalt-2:#3C4146; --marking:#FFFFFF;
+  --yellow:#F2B705; --yellow-ink:#1D2023; --blue:#1F5FAE; --red:#C8102E; --green:#1E8A4C;
+  --focus:#1F5FAE;
+  --f-display:"Overpass","Arial Narrow",Arial,sans-serif;
+  --f-body:"Overpass",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --f-mono:"Overpass Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#16191C; --surface:#1F2327; --surface-2:#2A2F34; --fg:#ECEEEA; --muted:#A5ACB1; --line:#383E44;
+  --asphalt:#0F1113; --asphalt-2:#24282C; --marking:#E9EBE6; --yellow:#F5C125; --yellow-ink:#16191C;
+  --blue:#5B93DB; --red:#EF4A5E; --green:#3FBF76; --focus:#8DB8F0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#16191C; --surface:#1F2327; --surface-2:#2A2F34; --fg:#ECEEEA; --muted:#A5ACB1; --line:#383E44;
+  --asphalt:#0F1113; --asphalt-2:#24282C; --marking:#E9EBE6; --yellow:#F5C125; --yellow-ink:#16191C;
+  --blue:#5B93DB; --red:#EF4A5E; --green:#3FBF76; --focus:#8DB8F0; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.55;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;text-wrap:balance;margin:0}
+h2{font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:900;letter-spacing:-.01em}
+h3{font-size:1.2rem;font-weight:800}
+p{margin:0}
+a{color:var(--blue)}
+button{font-family:inherit;font-size:1rem;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.lead{color:var(--muted);max-width:62ch;font-size:1.05rem}
+
+/* bara de navigare */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--asphalt);color:#fff}
+.nav .wrap{display:flex;gap:6px;align-items:center;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+.nav a{color:#fff;text-decoration:none;font-weight:700;font-size:.92rem;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.nav a:hover{background:rgba(255,255,255,.12)}
+.nav .brand{font-family:var(--f-display);font-weight:900;letter-spacing:.02em;margin-right:6px;display:flex;align-items:center;gap:8px}
+.nav .brand i{display:inline-block;width:10px;height:26px;background:linear-gradient(#EF4A5E 0 33%,#F5C125 33% 66%,#3FBF76 66%);border-radius:4px}
+
+/* marcaj rutier între secțiuni */
+.dash{height:6px;background:repeating-linear-gradient(90deg,var(--line) 0 38px,transparent 38px 64px);margin-block:8px}
+section{padding-block:56px 40px;scroll-margin-top:56px}
+.sec-head{display:grid;gap:10px;margin-bottom:28px}
+
+/* HERO */
+.hero{background:var(--asphalt);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.3fr .9fr;gap:32px;align-items:center;padding-block:48px 72px}
+.hero h1{font-size:clamp(2.8rem,8vw,5.6rem);font-weight:900;letter-spacing:-.02em;line-height:.95}
+.hero h1 span{color:#F5C125}
+.hero p{color:#D5D9DC;max-width:52ch;font-size:1.1rem;margin-top:16px}
+.hero .zebra{position:absolute;left:0;right:0;bottom:0;height:34px;background:repeating-linear-gradient(90deg,#E9EBE6 0 44px,transparent 44px 80px);opacity:.9}
+.who{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.who button{background:#fff;color:#1D2023;border:0;border-radius:999px;padding:10px 18px;font-weight:800;display:flex;gap:8px;align-items:center}
+.who button:hover{background:#F5C125}
+.who svg{width:22px;height:22px}
+.light-box{justify-self:center;background:#15181A;border-radius:22px;padding:18px 16px;display:grid;gap:12px;box-shadow:0 18px 40px rgba(0,0,0,.35);border:3px solid #444A50}
+.lamp{width:78px;height:78px;border-radius:50%;background:#2B2F33;transition:background .3s, box-shadow .3s}
+.lamp.on.r{background:#EF4A5E;box-shadow:0 0 34px #EF4A5E}
+.lamp.on.y{background:#F5C125;box-shadow:0 0 34px #F5C125}
+.lamp.on.g{background:#3FBF76;box-shadow:0 0 34px #3FBF76}
+.light-cap{font-family:var(--f-mono);font-size:.8rem;color:#D5D9DC;text-align:center;max-width:120px}
+.hero-side{display:flex;gap:18px;align-items:center;justify-content:center}
+
+/* STATISTICI */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.stat b{display:block;font-family:var(--f-display);font-weight:900;font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:.95rem}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.chart h3{margin-bottom:14px;font-size:1.05rem}
+.bar-row{display:grid;grid-template-columns:150px 1fr 48px;gap:10px;align-items:center;margin-block:9px;font-size:.93rem}
+.bar-track{height:18px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-row .v{font-family:var(--f-mono);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.src{font-size:.82rem;color:var(--muted);margin-top:12px}
+
+/* REGULI */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tab{border:2px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:9px 18px;font-weight:800;display:flex;gap:8px;align-items:center}
+.tab svg{width:22px;height:22px}
+.tab[aria-selected="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.rule{display:grid;grid-template-columns:56px 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;align-items:start}
+.rule .ic{width:56px;height:56px}
+.rule h3{font-size:1.05rem;margin-bottom:4px}
+.rule p{color:var(--muted);font-size:.97rem}
+.rule.key{border-color:var(--yellow);box-shadow:inset 0 0 0 1px var(--yellow)}
+
+/* ANIMAȚII */
+.anim{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.anim-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap}
+.anim-head p{color:var(--muted);font-size:.95rem}
+.stage{background:var(--asphalt-2);position:relative}
+.stage svg{display:block;width:100%;height:auto}
+.caption{padding:14px 20px;font-weight:700;display:flex;gap:10px;align-items:center;min-height:56px;border-top:1px solid var(--line)}
+.caption .dot{width:14px;height:14px;border-radius:50%;flex:none}
+.btn{background:var(--fg);color:var(--bg);border:0;border-radius:999px;padding:9px 18px;font-weight:800}
+.btn.ghost{background:transparent;color:var(--fg);border:2px solid var(--line)}
+.ctrls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;padding:14px 20px;border-top:1px solid var(--line)}
+.ctrls label{font-weight:700;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input[type=range]{width:min(320px,70vw);accent-color:var(--yellow)}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--fg);padding:7px 14px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--yellow);color:var(--yellow-ink)}
+.readout{display:flex;flex-wrap:wrap;gap:22px;padding:0 20px 16px;font-size:.95rem}
+.readout b{font-family:var(--f-mono);font-size:1.25rem;font-variant-numeric:tabular-nums}
+.legend-sw{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* INDICATOARE */
+.signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.sign{perspective:800px;background:none;border:0;padding:0;height:210px;color:var(--fg);text-align:center}
+.sign .inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.sign.flip .inner{transform:rotateY(180deg)}
+.sign .face{position:absolute;inset:0;backface-visibility:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px}
+.sign .face svg{width:96px;height:96px}
+.sign .back{transform:rotateY(180deg);background:var(--surface-2);text-align:left;justify-content:flex-start}
+.sign .back h3{font-size:1rem}
+.sign .back p{font-size:.88rem;color:var(--muted);line-height:1.4}
+.sign .cat{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sign .hint{font-size:.8rem;color:var(--muted)}
+.sign-game{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}
+
+/* SCENARII */
+.scen{display:grid;grid-template-columns:1.05fr 1fr;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.scen-art{background:var(--asphalt-2);min-width:0;display:flex;align-items:center}
+.scen-art svg{width:100%;height:auto;display:block}
+.scen-body{padding:24px;display:grid;gap:14px;align-content:start;min-width:0}
+.scen-body .who-tag{display:inline-flex;gap:6px;align-items:center;font-family:var(--f-mono);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--surface-2);padding:4px 10px;border-radius:999px;width:fit-content}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;background:var(--bg);color:var(--fg);border:2px solid var(--line);border-radius:8px;padding:11px 14px;font-weight:600}
+.opt:hover:not(:disabled){border-color:var(--fg)}
+.opt.good{border-color:var(--green);background:color-mix(in srgb,var(--green) 14%,var(--surface))}
+.opt.bad{border-color:var(--red);background:color-mix(in srgb,var(--red) 12%,var(--surface))}
+.opt:disabled{cursor:default}
+.fb{padding:12px 14px;border-radius:8px;background:var(--surface-2);font-size:.97rem}
+.fb b{display:block;margin-bottom:2px}
+.scen-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.pips{display:flex;gap:6px}
+.pips i{width:26px;height:6px;border-radius:3px;background:var(--line)}
+.pips i.on{background:var(--yellow)}
+
+/* TEST */
+.quiz{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;max-width:760px}
+.q-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.q-prog{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.q-prog div{height:100%;background:var(--yellow);transition:width .3s}
+.q-text{font-size:1.25rem;font-weight:800;font-family:var(--f-display);margin-bottom:14px}
+.q-sign{width:84px;height:84px;margin-bottom:12px}
+.result{text-align:center;display:grid;gap:12px;justify-items:center;padding-block:10px}
+.result .big{font-family:var(--f-display);font-weight:900;font-size:3.4rem;line-height:1}
+
+/* VIDEO */
+.vids{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.vid{display:grid;grid-template-rows:auto 1fr;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;text-decoration:none;color:var(--fg)}
+.vid .thumb{aspect-ratio:16/9;max-width:100%;background:var(--asphalt-2);display:flex;align-items:center;justify-content:center;position:relative}
+.vid .thumb svg{width:100%;height:100%}
+.vid .play{position:absolute;width:56px;height:56px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center}
+.vid .play::after{content:"";border-left:18px solid var(--yellow-ink);border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+.vid .meta{padding:14px 16px;display:grid;gap:6px;align-content:start}
+.vid .meta p{color:var(--muted);font-size:.92rem}
+.vid .tag{font-family:var(--f-mono);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.vid:hover{border-color:var(--fg)}
+
+footer{background:var(--asphalt);color:#D5D9DC;padding-block:36px;margin-top:40px;font-size:.9rem}
+footer a{color:#F5C125}
+footer ul{padding-left:18px;margin:10px 0 0;display:grid;gap:4px}
+
+@media (max-width:820px){
+  .hero .wrap{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .charts,.rules,.scen{grid-template-columns:1fr}
+  .vids{grid-template-columns:1fr 1fr}
+  .bar-row{grid-template-columns:110px 1fr 44px}
+}
+@media (max-width:520px){
+  body{font-size:16px}
+  .vids{grid-template-columns:1fr}
+  .lamp{width:58px;height:58px}
+  .rule{grid-template-columns:44px 1fr}.rule .ic{width:44px;height:44px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<nav class="nav" aria-label="Secțiuni">
+  <div class="wrap">
+    <span class="brand"><i></i>Ochii pe drum</span>
+    <a href="#cifre">Cifre</a>
+    <a href="#reguli">Reguli</a>
+    <a href="#animatii">Animații</a>
+    <a href="#indicatoare">Indicatoare</a>
+    <a href="#scenarii">Ce faci?</a>
+    <a href="#test">Test</a>
+    <a href="#video">Video</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow" style="color:#A5ACB1">Educație rutieră pentru toate vârstele</div>
+      <h1>Privește.<br>Ascultă.<br><span>Abia apoi pășește.</span></h1>
+      <p>Reguli explicate simplu, animații, indicatoare, situații reale și un test scurt. Pentru copii, pietoni, șoferi, bicicliști și cei care merg cu trotineta, pe drumurile din România.</p>
+      <div class="who" role="group" aria-label="Alege cine ești">
+        <button data-go="copii"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="3.2" fill="#1D2023"/><path d="M7 21v-6l-2-3 3-3h8l3 3-2 3v6" fill="#F2B705" stroke="#1D2023" stroke-width="1.5"/></svg>Sunt copil</button>
+        <button data-go="pietoni"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4" r="2.4" fill="#1D2023"/><path d="M12 8l-3 5 3 2-1 7M12 8l3 4 3 1M9 13l-3 1M12 15l4 7" stroke="#1D2023" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>Merg pe jos</button>
+        <button data-go="soferi"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#1D2023" stroke-width="2.4"/><circle cx="12" cy="12" r="2.4" fill="#1D2023"/><path d="M3.5 11h6M14.5 11h6M12 14.5V21" stroke="#1D2023" stroke-width="2.4"/></svg>Conduc mașina</button>
+        <button data-go="biciclisti"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="16" r="4" fill="none" stroke="#1D2023" stroke-width="2"/><circle cx="18" cy="16" r="4" fill="none" stroke="#1D2023" stroke-width="2"/><path d="M6 16l4-7h6l2 7M10 9l3 7h5M9 6h3" stroke="#1D2023" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Bicicletă / trotinetă</button>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="light-box" aria-hidden="true">
+        <div class="lamp r" id="hl-r"></div><div class="lamp y" id="hl-y"></div><div class="lamp g" id="hl-g"></div>
+      </div>
+      <div class="light-cap" id="hl-cap" aria-live="polite">Roșu: stai pe loc</div>
+    </div>
+  </div>
+  <div class="zebra" aria-hidden="true"></div>
+</header>
+
+<main>
+<!-- CIFRE -->
+<section id="cifre">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">De ce contează</div>
+      <h2>România în cifre, anul 2025</h2>
+      <p class="lead">Numărul morților pe șosele a scăzut față de 2024, dar România rămâne printre țările cu cea mai mare mortalitate rutieră din Uniunea Europeană.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>1.293</b><span>persoane au murit în accidente rutiere în 2025 (cu 12,5% mai puține decât în 2024)</span></div>
+      <div class="stat"><b>3.125</b><span>persoane rănite grav în 3.950 de accidente grave</span></div>
+      <div class="stat"><b style="color:var(--red)">3,5 / zi</b><span>în medie, aproape 4 oameni pierd viața în fiecare zi pe drumurile din România</span></div>
+    </div>
+    <div class="charts">
+      <div class="chart">
+        <h3>Decese la un milion de locuitori</h3>
+        <div class="bar-row"><span>România 2024</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--muted)"></div></div><span class="v">78</span></div>
+        <div class="bar-row"><span>România 2025</span><div class="bar-track"><div class="bar-fill" style="width:87%;background:var(--red)"></div></div><span class="v">68</span></div>
+        <div class="bar-row"><span>Media UE 2025</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--blue)"></div></div><span class="v">43</span></div>
+        <p class="src">Sursa: Comisia Europeană, date preliminare 2025.</p>
+      </div>
+      <div class="chart">
+        <h3>Principalele cauze ale accidentelor grave</h3>
+        <div class="bar-row"><span>Traversare neregulamentară (pietoni)</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--yellow)"></div></div><span class="v">16,1%</span></div>
+        <div class="bar-row"><span>Viteză neadaptată</span><div class="bar-track"><div class="bar-fill" style="width:95%;background:var(--yellow)"></div></div><span class="v">15,3%</span></div>
+        <div class="bar-row"><span>Neacordarea priorității</span><div class="bar-track"><div class="bar-fill" style="width:59%;background:var(--yellow)"></div></div><span class="v">9,5%</span></div>
+        <p class="src">Sursa: bilanțul Poliției Române pentru 2025.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="wrap"><div class="dash"></div></div>
+
+<!-- REGULI -->
+<section id="reguli">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Pe scurt, pentru fiecare</div>
+      <h2>Regulile de bază</h2>
+      <p class="lead">Alege categoria ta. Regula marcată cu galben este cea mai importantă de ținut minte.</p>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="rules" id="rules" role="tabpanel"></div>
+  </div>
+</section>
+<div class="wrap"><div class="dash"></div></div>
+
+<!-- ANIMAȚII -->
+<section id="animatii">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Vezi cum funcționează</div>
+      <h2>Scene animate</h2>
+      <p class="lead">Trei lucruri greu de explicat în cuvinte: cum funcționează semaforul la trecere, cât îi trebuie unei mașini să oprească și cât de târziu te vede un șofer noaptea.</p>
+    </div>
+
+    <div class="anim">
+      <div class="anim-head">
+        <div><h3>1. Traversarea la semafor</h3><p>Urmărește culorile pentru mașini și pentru pietoni.</p></div>
+        <button class="btn" id="cross-btn">Pornește</button>
+      </div>
+      <div class="stage">
+        <svg viewBox="0 0 800 340" id="cross-svg" role="img" aria-label="Animație: pieton care traversează la semafor, mașina oprește la roșu">
+          <rect width="800" height="340" fill="#6FA35C"/>
+          <rect x="0" y="0" width="800" height="70" fill="#B9BDB5"/>
+          <rect x="0" y="270" width="800" height="70" fill="#B9BDB5"/>
+          <rect x="0" y="70" width="800" height="200" fill="#3A3F44"/>
+          <g fill="#F4F4F0">
+            <rect x="0" y="166" width="60" height="6"/><rect x="100" y="166" width="60" height="6"/><rect x="200" y="166" width="60" height="6"/>
+            <rect x="560" y="166" width="60" height="6"/><rect x="660" y="166" width="60" height="6"/><rect x="760" y="166" width="60" height="6"/>
+            <rect x="340" y="80" width="110" height="18"/><rect x="340" y="110" width="110" height="18"/><rect x="340" y="140" width="110" height="18"/><rect x="340" y="170" width="110" height="18"/><rect x="340" y="200" width="110" height="18"/><rect x="340" y="230" width="110" height="18"/>
+            <rect x="318" y="176" width="6" height="90"/>
+          </g>
+          <!-- semafor mașini -->
+          <g transform="translate(262,262)">
+            <rect width="30" height="76" rx="6" fill="#15181A"/>
+            <circle id="cl-r" cx="15" cy="14" r="9" fill="#442"/><circle id="cl-y" cx="15" cy="38" r="9" fill="#442"/><circle id="cl-g" cx="15" cy="62" r="9" fill="#442"/>
+          </g>
+          <!-- semafor pietoni -->
+          <g transform="translate(470,4)">
+            <rect width="34" height="60" rx="6" fill="#15181A"/>
+            <g id="pl-r"><circle cx="17" cy="16" r="11" fill="#422"/><path d="M14 10h6v14h-6z" fill="#000" opacity=".4"/></g>
+            <g id="pl-g"><circle cx="17" cy="44" r="11" fill="#242"/></g>
+          </g>
+          <!-- mașini -->
+          <g id="car1"><rect x="-60" y="-24" width="120" height="48" rx="12" fill="#C8102E"/><rect x="10" y="-18" width="30" height="36" rx="5" fill="#9CC3E6"/><rect x="-44" y="-18" width="22" height="36" rx="5" fill="#9CC3E6"/><rect x="52" y="-20" width="8" height="10" fill="#FFF3B0"/><rect x="52" y="10" width="8" height="10" fill="#FFF3B0"/></g>
+          <g id="car2"><rect x="-60" y="-24" width="120" height="48" rx="12" fill="#1F5FAE"/><rect x="10" y="-18" width="30" height="36" rx="5" fill="#9CC3E6"/><rect x="-44" y="-18" width="22" height="36" rx="5" fill="#9CC3E6"/><rect x="52" y="-20" width="8" height="10" fill="#FFF3B0"/><rect x="52" y="10" width="8" height="10" fill="#FFF3B0"/></g>
+          <!-- pieton -->
+          <g id="ped"><circle r="13" fill="#F2B705" stroke="#1D2023" stroke-width="3"/><circle cy="-2" r="6" fill="#6B4B2A"/><circle cx="0" cy="-20" r="0"/></g>
+          <g id="ped2"><circle r="10" fill="#FFFFFF" stroke="#1D2023" stroke-width="3"/><circle cy="-1" r="4.5" fill="#1D2023"/></g>
+        </svg>
+      </div>
+      <div class="caption" aria-live="polite"><span class="dot" id="cross-dot" style="background:var(--green)"></span><span id="cross-cap">Apasă „Pornește” pentru a vedea scena.</span></div>
+    </div>
+
+    <div class="anim">
+      <div class="anim-head">
+        <div><h3>2. Distanța de oprire</h3><p>Un copil apare pe drum la 30 de metri. Reușește mașina să oprească?</p></div>
+        <button class="btn" id="stop-btn">Frânează!</button>
+      </div>
+      <div class="stage"><svg viewBox="0 0 800 220" id="stop-svg" role="img" aria-label="Vizualizarea distanței de oprire în funcție de viteză"></svg></div>
+      <div class="ctrls">
+        <label for="speed">Viteza: <b id="speed-v" style="font-family:var(--f-mono)">50 km/h</b><input type="range" id="speed" min="20" max="130" step="5" value="50"></label>
+        <div class="seg" role="group" aria-label="Starea drumului"><button id="dry" aria-pressed="true">Drum uscat</button><button id="wet" aria-pressed="false">Drum ud</button></div>
+      </div>
+      <div class="readout">
+        <span><span class="legend-sw" style="background:var(--yellow)"></span>Până reacționezi (1 s): <b id="d-react">14 m</b></span>
+        <span><span class="legend-sw" style="background:var(--red)"></span>Frânare: <b id="d-brake">14 m</b></span>
+        <span>Total: <b id="d-total">28 m</b></span>
+      </div>
+      <div class="caption" aria-live="polite"><span class="dot" id="stop-dot"></span><span id="stop-cap"></span></div>
+    </div>
+
+    <div class="anim">
+      <div class="anim-head">
+        <div><h3>3. Noaptea, pe un drum fără iluminat</h3><p>De la ce distanță te vede un șofer cu faza scurtă, în funcție de haine? Valorile sunt aproximative.</p></div>
+      </div>
+      <div class="stage"><svg viewBox="0 0 800 220" id="night-svg" role="img" aria-label="Distanța de la care este văzut un pieton noaptea"></svg></div>
+      <div class="ctrls">
+        <div class="seg" role="group" aria-label="Hainele pietonului">
+          <button data-cl="dark" aria-pressed="true">Haine închise</button>
+          <button data-cl="light" aria-pressed="false">Haine deschise</button>
+          <button data-cl="refl" aria-pressed="false">Vestă reflectorizantă</button>
+        </div>
+      </div>
+      <div class="caption" aria-live="polite"><span class="dot" id="night-dot"></span><span id="night-cap"></span></div>
+    </div>
+  </div>
+</section>
+<div class="wrap"><div class="dash"></div></div>
+
+<!-- INDICATOARE -->
+<section id="indicatoare">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Limbajul drumului</div>
+      <h2>Indicatoare rutiere</h2>
+      <p class="lead">Atinge un indicator ca să îl întorci și să afli ce înseamnă. Formele spun mult: triunghiul avertizează, cercul roșu interzice, cercul albastru obligă, pătratul albastru informează.</p>
+    </div>
+    <div class="sign-game">
+      <button class="btn" id="flip-all">Întoarce-le pe toate</button>
+      <button class="btn ghost" id="reset-signs">Ascunde răspunsurile</button>
+    </div>
+    <div class="signs" id="signs"></div>
+  </div>
+</section>
+<div class="wrap"><div class="dash"></div></div>
+
+<!-- SCENARII -->
+<section id="scenarii">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Situații reale</div>
+      <h2>Ce faci?</h2>
+      <p class="lead">Alege ce ai face în fiecare situație. Vei vedea imediat ce se poate întâmpla.</p>
+    </div>
+    <div class="scen" id="scen">
+      <div class="scen-art" id="scen-art"></div>
+      <div class="scen-body" id="scen-body"></div>
+    </div>
+    <div class="scen-nav">
+      <button class="btn ghost" id="scen-prev">← Înapoi</button>
+      <div class="pips" id="scen-pips"></div>
+      <button class="btn" id="scen-next">Următoarea →</button>
+    </div>
+  </div>
+</section>
+<div class="wrap"><div class="dash"></div></div>
+
+<!-- TEST -->
+<section id="test">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Verifică-te</div>
+      <h2>Testul de 10 întrebări</h2>
+      <p class="lead">Câte o întrebare pe rând, cu explicație după fiecare răspuns.</p>
+    </div>
+    <div class="quiz" id="quiz"></div>
+  </div>
+</section>
+<div class="wrap"><div class="dash"></div></div>
+
+<!-- VIDEO -->
+<section id="video">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">De urmărit</div>
+      <h2>Videoclipuri și campanii</h2>
+      <p class="lead">Clipuri de la surse oficiale și căutări pregătite pe teme precise. Se deschid într-o filă nouă.</p>
+    </div>
+    <div class="vids" id="vids"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b style="color:#fff">Ochii pe drum</b> este un material educativ. Pentru textul oficial al regulilor consultă Codul rutier (OUG 195/2002) și regulamentul de aplicare.</p>
+    <ul>
+      <li><a href="https://newsweek.ro/auto/1293-de-morti-in-romania-in-accidente-auto-in-2025-cu-125-mai-putini-ca-in-2024-motivul-autostrazile">Newsweek România: bilanțul Poliției Române pe 2025</a></li>
+      <li><a href="https://transport.ec.europa.eu/news-events/news/eu-road-deaths-drop-3-2025-2026-03-24_en">Comisia Europeană: decesele rutiere în UE în 2025</a></li>
+      <li><a href="https://www.politiaromana.ro/ro/comunicate/campanii-de-prevenire-si-informare-ale-politiei-romane">Poliția Română: campanii de prevenire</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- semaforul din hero ---------- */
+(function(){
+  var seq=[["r","Roșu: stai pe loc",3000],["g","Verde: te asiguri, apoi treci",3000],["y","Galben: nu mai începe traversarea",1400]];
+  var i=0;
+  function step(){
+    ["r","y","g"].forEach(function(k){$("#hl-"+k).classList.toggle("on",k===seq[i][0])});
+    $("#hl-cap").textContent=seq[i][1];
+    var d=seq[i][2]; i=(i+1)%seq.length;
+    if(!reduce) setTimeout(step,d);
+  }
+  step();
+})();
+
+/* ---------- pictograme ---------- */
+var IC={
+  child:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--yellow)"/><circle cx="28" cy="17" r="7" fill="#1D2023"/><path d="M18 46V34l-4-6 7-6h14l7 6-4 6v12" fill="#fff" stroke="#1D2023" stroke-width="2.5"/></svg>',
+  walk:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--blue)"/><circle cx="31" cy="12" r="5" fill="#fff"/><path d="M29 20l-6 11 6 4-2 13M29 20l6 9 7 2M23 31l-7 2M29 35l8 13" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  wheel:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--asphalt)"/><circle cx="28" cy="28" r="17" fill="none" stroke="#fff" stroke-width="4.5"/><circle cx="28" cy="28" r="4.5" fill="#fff"/><path d="M12 26h12M32 26h12M28 32v13" stroke="#fff" stroke-width="4.5"/></svg>',
+  bike:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--green)"/><circle cx="16" cy="36" r="8" fill="none" stroke="#fff" stroke-width="3.5"/><circle cx="40" cy="36" r="8" fill="none" stroke="#fff" stroke-width="3.5"/><path d="M16 36l8-14h10l6 14M24 22l6 14h10M21 16h7" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  eye:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--surface-2)"/><path d="M8 28s8-12 20-12 20 12 20 12-8 12-20 12S8 28 8 28z" fill="#fff" stroke="var(--fg)" stroke-width="3"/><circle cx="28" cy="28" r="6" fill="var(--fg)"/></svg>',
+  phone:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--surface-2)"/><rect x="19" y="10" width="18" height="34" rx="4" fill="none" stroke="var(--fg)" stroke-width="3"/><path d="M10 46L46 10" stroke="var(--red)" stroke-width="4" stroke-linecap="round"/></svg>',
+  vest:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--surface-2)"/><path d="M18 10l6 6h8l6-6 8 8-4 30H14L10 18z" fill="#F2B705" stroke="var(--fg)" stroke-width="2.5"/><path d="M12 30h32M13 38h30" stroke="#E9EBE6" stroke-width="4"/></svg>',
+  belt:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--surface-2)"/><circle cx="28" cy="14" r="6" fill="var(--fg)"/><path d="M16 48V28c0-5 5-8 12-8s12 3 12 8v20" fill="none" stroke="var(--fg)" stroke-width="3"/><path d="M36 20L20 46" stroke="var(--red)" stroke-width="5" stroke-linecap="round"/></svg>',
+  speed:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--surface-2)"/><circle cx="28" cy="30" r="18" fill="#fff" stroke="#C8102E" stroke-width="5"/><text x="28" y="37" text-anchor="middle" font-family="Overpass,Arial" font-weight="900" font-size="17" fill="#1D2023">50</text></svg>',
+  glass:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--surface-2)"/><path d="M20 12h16l-2 20a6 6 0 0 1-12 0z M28 38v8M22 46h12" fill="none" stroke="var(--fg)" stroke-width="3"/><path d="M10 46L46 10" stroke="var(--red)" stroke-width="4" stroke-linecap="round"/></svg>',
+  helmet:'<svg viewBox="0 0 56 56" class="ic" aria-hidden="true"><rect width="56" height="56" rx="12" fill="var(--surface-2)"/><path d="M10 34a18 18 0 0 1 36 0v4H10z" fill="var(--green)" stroke="var(--fg)" stroke-width="2.5"/><path d="M22 18l-2 16M34 18l2 16" stroke="var(--fg)" stroke-width="2"/></svg>'
+};
+
+/* ---------- reguli ---------- */
+var RULES={
+  copii:{label:"Copii",icon:"child",items:[
+    ["eye","Stai, privește, ascultă",'Înainte să treci strada te oprești pe marginea trotuarului, te uiți stânga, dreapta, iar stânga și asculți dacă vine o mașină.',true],
+    ["walk","Treci doar pe trecere",'Folosește trecerea de pietoni sau semaforul. Pe verde te asiguri din nou, pentru că unii șoferi nu opresc.'],
+    ["child","Ține adultul de mână",'Copiii mici traversează numai de mână cu un adult. Tu vezi mașinile mai greu, iar șoferii te văd mai greu, pentru că ești mai mic.'],
+    ["belt","Centura și scaunul auto",'În mașină stai în scaunul pentru copii potrivit taliei tale, cu centura pusă. Copiii sub 12 ani nu stau pe scaunul din față.'],
+    ["vest","Culori vii și reflectorizante",'Pe ghiozdan și pe haine pune benzi reflectorizante. Seara, un copil îmbrăcat în negru e aproape invizibil.'],
+    ["bike","Bicicleta: pe pistă sau în parc",'Pe drumul public cu bicicleta ai voie abia de la 14 ani. Până atunci, pedalează în parc, pe pistă sau în curte, cu cască.']]},
+  pietoni:{label:"Pietoni",icon:"walk",items:[
+    ["walk","Traversează numai pe loc marcat",'Traversarea prin locuri nepermise este prima cauză a accidentelor grave din 2025. Câțiva pași în plus până la trecere pot salva o viață.',true],
+    ["phone","Fără telefon când traversezi",'Pune telefonul deoparte și scoate căștile din urechi cât timp ești pe carosabil. Ai nevoie de ochi și de urechi.'],
+    ["eye","Contact vizual cu șoferul",'Chiar dacă ai prioritate, nu păși în fața unei mașini până nu ești sigur că șoferul te-a văzut și încetinește.'],
+    ["walk","În afara orașului, pe stânga",'Unde nu există trotuar, mergi pe marginea din stânga a drumului, cu fața spre mașinile care vin.'],
+    ["vest","Fii vizibil noaptea",'Haine deschise, vestă reflectorizantă sau o lanternă. Un șofer te vede de la 25 m în haine închise și de la aproximativ 150 m cu vestă.'],
+    ["eye","Atenție la mașinile care virează",'La semafor verde, mașinile care virează au și ele verde, dar trebuie să îți acorde prioritate. Uită-te după ele.']]},
+  soferi:{label:"Șoferi",icon:"wheel",items:[
+    ["speed","Respectă limitele de viteză",'În localitate 50 km/h, în afara localității 90 km/h, pe drum expres 100 km/h, pe autostradă 130 km/h (autoturisme). În zonele cu școli, mai încet.',true],
+    ["walk","Oprește pentru pietoni",'Pietonul angajat pe trecerea nesemaforizată are prioritate. Încetinește din timp când te apropii de o trecere.'],
+    ["phone","Telefonul doar hands-free",'Un mesaj citit la 50 km/h înseamnă aproape 30 de metri parcurși fără să privești drumul.'],
+    ["glass","Alcool: toleranță zero",'Nu ai voie să conduci după ce ai consumat alcool. Peste 0,80 g/l în sânge este infracțiune.'],
+    ["belt","Centura pentru toți",'Șoferul și toți pasagerii, inclusiv pe bancheta din spate, poartă centura. Copiii călătoresc în scaune adaptate.'],
+    ["eye","Păstrează distanța",'Lasă cel puțin 2 secunde față de mașina din față, iar pe ploaie dublu. Verifică unghiul mort la schimbarea benzii.']]},
+  biciclisti:{label:"Bicicliști și trotinete",icon:"bike",items:[
+    ["bike","Pe pistă sau pe marginea din dreapta",'Folosește pista pentru biciclete unde există. Altfel mergi cât mai pe dreapta carosabilului. Trotineta electrică nu are voie pe trotuar.',true],
+    ["helmet","Poartă cască",'Casca este obligatorie pentru utilizatorii de trotinete electrice sub 16 ani și recomandată oricui merge cu bicicleta sau trotineta.'],
+    ["child","Vârsta minimă: 14 ani",'Pe drumurile publice, bicicleta și trotineta electrică se conduc de la 14 ani în sus.'],
+    ["vest","Lumini și reflectorizante",'Noaptea sau pe ceață ai nevoie de lumină albă în față, roșie în spate și elemente reflectorizante.'],
+    ["walk","Pe trecere, mergi pe jos",'Ca să traversezi pe trecerea de pietoni, cobori și împingi bicicleta sau trotineta pe lângă tine.'],
+    ["phone","Mâinile pe ghidon",'Fără telefon în mână și fără căști în ambele urechi. Nu transporta un pasager pe trotinetă.']]}
+};
+var curTab="copii";
+function renderTabs(){
+  $("#tabs").innerHTML=Object.keys(RULES).map(function(k){
+    var r=RULES[k];
+    return '<button class="tab" role="tab" id="tab-'+k+'" aria-selected="'+(k===curTab)+'" data-k="'+k+'">'+IC[r.icon].replace('class="ic"','')+r.label+'</button>';
+  }).join("");
+  $("#rules").innerHTML=RULES[curTab].items.map(function(it){
+    return '<div class="rule'+(it[3]?' key':'')+'">'+IC[it[0]]+'<div><h3>'+it[1]+'</h3><p>'+it[2]+'</p></div></div>';
+  }).join("");
+  $("#rules").setAttribute("aria-labelledby","tab-"+curTab);
+}
+$("#tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;curTab=b.dataset.k;renderTabs();});
+$$(".who button").forEach(function(b){b.addEventListener("click",function(){curTab=b.dataset.go;renderTabs();$("#reguli").scrollIntoView({behavior:reduce?"auto":"smooth"});});});
+renderTabs();
+
+/* ---------- animația 1: traversarea ---------- */
+(function(){
+  var playing=false,t0=0,elapsed=0,raf=0,CYCLE=16;
+  var OFF_R="#4A2226",OFF_Y="#4A4222",OFF_G="#22422E";
+  var steps=[
+    [0,"Verde pentru mașini, roșu pentru pieton. Pietonul așteaptă pe trotuar, nu lângă bordură.","var(--green)"],
+    [5,"Galben pentru mașini: șoferii opresc înainte de linia de oprire.","var(--yellow)"],
+    [6.5,"Roșu pentru mașini. Pietonul are verde, dar se uită mai întâi stânga și dreapta.","var(--red)"],
+    [8,"Mașina a oprit. Pietonul traversează în ritm normal, fără să alerge și fără telefon.","var(--green)"],
+    [12.5,"Verdele pentru pietoni clipește: cine n-a pornit încă așteaptă următorul verde.","var(--yellow)"],
+    [14.5,"Din nou verde pentru mașini. Pietonul a ajuns în siguranță pe celălalt trotuar.","var(--green)"]
+  ];
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+  function lerp(a,b,p){return a+(b-a)*clamp(p,0,1)}
+  function draw(t){
+    var carLight=t<5||t>=14.5?"g":(t<6.5?"y":"r");
+    $("#cl-r").setAttribute("fill",carLight==="r"?"#EF4A5E":OFF_R);
+    $("#cl-y").setAttribute("fill",carLight==="y"?"#F5C125":OFF_Y);
+    $("#cl-g").setAttribute("fill",carLight==="g"?"#3FBF76":OFF_G);
+    var pedGreen=t>=7&&t<14;
+    var blink=t>=12.5&&t<14&&Math.floor(t*4)%2===0;
+    $("#pl-r circle").setAttribute("fill",pedGreen?"#422":"#EF4A5E");
+    $("#pl-g circle").setAttribute("fill",pedGreen&&!blink?"#3FBF76":"#242");
+    // mașina 1 trece pe verde
+    var x1=lerp(-80,900,t/5);
+    $("#car1").setAttribute("transform","translate("+x1+",215)");
+    // mașina 2 vine și oprește la linie (x=250), pleacă după 14.5
+    var x2;
+    if(t<4) x2=-100;
+    else if(t<7.5){var p=(t-4)/3.5;x2=lerp(-100,250,1-Math.pow(1-p,2));}
+    else if(t<14.5) x2=250;
+    else x2=lerp(250,900,(t-14.5)/1.5);
+    $("#car2").setAttribute("transform","translate("+x2+",215)");
+    // pieton: așteaptă sus (y=40), traversează 8-12.5 până jos (y=300)
+    var py=t<8?40:lerp(40,300,(t-8)/4.5);
+    var px=395+(t>=6.5&&t<8?Math.sin((t-6.5)*6)*6:0);
+    $("#ped").setAttribute("transform","translate("+px+","+py+")");
+    // al doilea pieton ajunge la bordură când clipește și așteaptă
+    var p2x=t<12?820:lerp(820,430,(t-12)/2.2);
+    $("#ped2").setAttribute("transform","translate("+p2x+",46)");
+    var s=steps[0];for(var i=0;i<steps.length;i++){if(t>=steps[i][0])s=steps[i];}
+    if($("#cross-cap").textContent!==s[1]){$("#cross-cap").textContent=s[1];$("#cross-dot").style.background=s[2];}
+  }
+  function loop(ts){
+    var t=((ts-t0)/1000)%CYCLE; elapsed=t; draw(t);
+    raf=requestAnimationFrame(loop);
+  }
+  $("#cross-btn").addEventListener("click",function(){
+    playing=!playing;
+    this.textContent=playing?"Pauză":"Continuă";
+    if(playing){t0=performance.now()-elapsed*1000;raf=requestAnimationFrame(loop);}else cancelAnimationFrame(raf);
+  });
+  draw(0);$("#cross-cap").textContent="Apasă „Pornește” pentru a vedea scena.";
+})();
+
+/* ---------- animația 2: distanța de oprire ---------- */
+(function(){
+  var svg=$("#stop-svg"),wet=false,anim=0;
+  var X0=60,SCALE=5.2,CHILD=30; // 1 m = 5.2 px, afișăm până la ~140 m
+  function dist(v){var ms=v/3.6,a=wet?5:7;return {r:ms*1,b:ms*ms/(2*a)};}
+  function base(){
+    var ticks="";for(var m=0;m<=140;m+=10){var x=X0+m*SCALE;var lab=m+(m===140?" m":"");ticks+='<line x1="'+x+'" y1="176" x2="'+x+'" y2="184" stroke="#C9CDD1" stroke-width="2"/><text x="'+x+'" y="202" fill="#C9CDD1" font-family="Overpass Mono,monospace" font-size="12" text-anchor="middle">'+lab+'</text>';}
+    return '<rect width="800" height="220" fill="#34393E"/><rect y="40" width="800" height="120" fill="#3F454B"/>'+
+      '<g fill="#E9EBE6">'+Array.from({length:14},function(_,i){return '<rect x="'+(i*60)+'" y="97" width="34" height="5"/>'}).join("")+'</g>'+
+      ticks;
+  }
+  function carSvg(x){return '<g transform="translate('+x+',130)"><rect x="-54" y="-20" width="54" height="40" rx="10" fill="#1F5FAE"/><rect x="-22" y="-15" width="15" height="30" rx="4" fill="#9CC3E6"/></g>';}
+  function childSvg(){var x=X0+CHILD*SCALE;return '<g transform="translate('+x+',75)"><circle r="11" fill="#F2B705" stroke="#1D2023" stroke-width="3"/><circle cy="-1" r="5" fill="#6B4B2A"/></g><line x1="'+x+'" y1="44" x2="'+x+'" y2="160" stroke="#F2B705" stroke-width="2" stroke-dasharray="5 5"/><text x="'+(x+8)+'" y="56" fill="#F5C125" font-family="Overpass,Arial" font-weight="800" font-size="13">copil la 30 m</text>';}
+  function render(carX){
+    var v=+$("#speed").value,d=dist(v),tot=d.r+d.b;
+    var bars='<rect x="'+X0+'" y="163" width="'+(d.r*SCALE)+'" height="8" fill="#F5C125"/><rect x="'+(X0+d.r*SCALE)+'" y="163" width="'+(d.b*SCALE)+'" height="8" fill="#EF4A5E"/>';
+    svg.innerHTML=base()+bars+childSvg()+carSvg(carX==null?X0:carX);
+    $("#speed-v").textContent=v+" km/h";
+    $("#d-react").textContent=Math.round(d.r)+" m";
+    $("#d-brake").textContent=Math.round(d.b)+" m";
+    $("#d-total").textContent=Math.round(tot)+" m";
+    var ok=tot<CHILD;
+    $("#stop-dot").style.background=ok?"var(--green)":"var(--red)";
+    var impact="";
+    if(!ok){var rem=v/3.6;var dLeft=CHILD-d.r;var vi= dLeft<=0? v : Math.sqrt(Math.max(0,rem*rem-2*(wet?5:7)*dLeft))*3.6;impact=" Mașina ar ajunge la copil cu aproximativ "+Math.round(vi)+" km/h.";}
+    $("#stop-cap").textContent=ok?"La "+v+" km/h mașina oprește în "+Math.round(tot)+" m, înainte de copil.":"La "+v+" km/h mașina are nevoie de "+Math.round(tot)+" m. Nu oprește la timp."+impact;
+    return tot;
+  }
+  function go(){
+    cancelAnimationFrame(anim);
+    var v=+$("#speed").value,d=dist(v),tot=d.r+d.b,ms=v/3.6,a=wet?5:7;
+    var tr=1,tb=ms/a,T=tr+tb,slow=Math.max(1.2,3/T),start=performance.now();
+    if(reduce){render(X0+tot*SCALE);return;}
+    (function f(now){
+      var t=(now-start)/1000/slow;
+      var s=t<tr?ms*t:d.r+ms*(t-tr)-a*(t-tr)*(t-tr)/2;
+      if(t>=T){s=tot;}
+      render(X0+Math.min(s,145)*SCALE);
+      if(t<T) anim=requestAnimationFrame(f);
+    })(start);
+  }
+  $("#speed").addEventListener("input",function(){cancelAnimationFrame(anim);render();});
+  $("#dry").addEventListener("click",function(){wet=false;this.setAttribute("aria-pressed","true");$("#wet").setAttribute("aria-pressed","false");render();});
+  $("#wet").addEventListener("click",function(){wet=true;this.setAttribute("aria-pressed","true");$("#dry").setAttribute("aria-pressed","false");render();});
+  $("#stop-btn").addEventListener("click",go);
+  render();
+})();
+
+/* ---------- animația 3: noaptea ---------- */
+(function(){
+  var svg=$("#night-svg");
+  var C={dark:{m:25,c:"#2A2D30",t:"În haine închise șoferul te vede abia de la circa 25 m. La 90 km/h îi trebuie aproape 70 m ca să oprească."},
+         light:{m:40,c:"#C9C2B0",t:"În haine deschise ești vizibil de la circa 40 m. Tot prea puțin pentru o mașină care vine cu 90 km/h."},
+         refl:{m:150,c:"#F2B705",t:"Cu vestă reflectorizantă ești vizibil de la circa 150 m. Șoferul are timp să încetinească și să te ocolească."}};
+  var cur="dark",X0=70,S=4.6;
+  function draw(){
+    var o=C[cur],px=X0+o.m*S,stopX=X0+70*S;
+    var ticks="";for(var m=0;m<=150;m+=25){var x=X0+m*S;ticks+='<text x="'+x+'" y="210" fill="#8E969C" font-family="Overpass Mono,monospace" font-size="12" text-anchor="middle">'+m+' m</text>';}
+    svg.innerHTML='<defs><linearGradient id="beam" x1="0" x2="1"><stop offset="0" stop-color="#FFF6C8" stop-opacity=".55"/><stop offset="1" stop-color="#FFF6C8" stop-opacity="0"/></linearGradient></defs>'+
+      '<rect width="800" height="220" fill="#0B0D10"/><rect y="50" width="800" height="120" fill="#16191C"/>'+
+      '<polygon points="'+(X0)+',95 '+(X0+320)+',60 '+(X0+320)+',150 '+(X0)+',125" fill="url(#beam)"/>'+
+      '<g transform="translate('+X0+',110)"><rect x="-56" y="-20" width="56" height="40" rx="10" fill="#3A4046"/><rect x="-3" y="-17" width="6" height="9" fill="#FFF6C8"/><rect x="-3" y="8" width="6" height="9" fill="#FFF6C8"/></g>'+
+      '<line x1="'+stopX+'" y1="50" x2="'+stopX+'" y2="170" stroke="#EF4A5E" stroke-width="2" stroke-dasharray="6 6"/><text x="'+(stopX+6)+'" y="186" fill="#EF4A5E" font-family="Overpass,Arial" font-weight="800" font-size="12">oprire de la 90 km/h ≈ 70 m</text>'+
+      '<line x1="'+px+'" y1="50" x2="'+px+'" y2="170" stroke="'+(cur==="refl"?"#F5C125":"#8E969C")+'" stroke-width="2"/>'+
+      '<g transform="translate('+px+',72)"><circle r="12" fill="'+o.c+'" stroke="'+(cur==="dark"?"#3A3F44":"#fff")+'" stroke-width="2"/>'+(cur==="refl"?'<path d="M-12 0h24" stroke="#fff" stroke-width="4"/>':'')+'</g>'+
+      '<text x="'+(px+16)+'" y="40" fill="#E9EBE6" font-family="Overpass,Arial" font-weight="800" font-size="13">văzut de la ~'+o.m+' m</text>'+ticks;
+    $("#night-cap").textContent=o.t;
+    $("#night-dot").style.background=cur==="refl"?"var(--green)":"var(--red)";
+  }
+  $$("[data-cl]").forEach(function(b){b.addEventListener("click",function(){cur=b.dataset.cl;$$("[data-cl]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});draw();});});
+  draw();
+})();
+
+/* ---------- indicatoare ---------- */
+var PED='<g fill="#1D2023"><circle cx="0" cy="-17" r="4.5"/><path d="M-2-11l-5 10 5 4-2 13h4l2-12-3-4 2-5 4 6 6 1v-4l-4-1-4-7z"/><path d="M-4 3l-6 2 1 3 7-2z"/><path d="M1 6l6 11h4l-6-12z"/></g>';
+function tri(inner){return '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8L94 88H6z" fill="#fff" stroke="#C8102E" stroke-width="9" stroke-linejoin="round"/><g transform="translate(50,62)">'+inner+'</g></svg>';}
+var SIGNS=[
+  {n:"Cedează trecerea",c:"Prioritate",d:"Oprești dacă e nevoie și lași să treacă vehiculele de pe drumul pe care intri.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 90L6 14h88z" fill="#fff" stroke="#C8102E" stroke-width="9" stroke-linejoin="round"/></svg>'},
+  {n:"Oprire (STOP)",c:"Prioritate",d:"Oprești obligatoriu la linie, chiar dacă nu vine nimeni, apoi acorzi prioritate.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="30,4 70,4 96,30 96,70 70,96 30,96 4,70 4,30" fill="#C8102E" stroke="#fff" stroke-width="4"/><text x="50" y="61" text-anchor="middle" font-family="Overpass,Arial" font-weight="900" font-size="28" fill="#fff">STOP</text></svg>'},
+  {n:"Drum cu prioritate",c:"Prioritate",d:"Ai prioritate la intersecțiile care urmează, față de drumurile laterale.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="18" y="18" width="64" height="64" transform="rotate(45 50 50)" fill="#fff" stroke="#1D2023" stroke-width="2"/><rect x="29" y="29" width="42" height="42" transform="rotate(45 50 50)" fill="#F2B705"/></svg>'},
+  {n:"Trecere pentru pietoni",c:"Informare",d:"Aici este o trecere de pietoni. Șoferii încetinesc și acordă prioritate pietonilor angajați în traversare.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="6" y="6" width="88" height="88" rx="8" fill="#1F5FAE"/><path d="M50 16L86 82H14z" fill="#fff"/><g fill="#1D2023"><rect x="28" y="72" width="8" height="5"/><rect x="40" y="72" width="8" height="5"/><rect x="52" y="72" width="8" height="5"/><rect x="64" y="72" width="8" height="5"/></g><g transform="translate(50,56) scale(.9)">'+PED+'</g></svg>'},
+  {n:"Atenție, trecere pentru pietoni",c:"Avertizare",d:"Urmează o trecere de pietoni. Încetinește și fii pregătit să oprești.",svg:tri('<g transform="scale(.95)">'+PED+'</g>')},
+  {n:"Atenție, copii",c:"Avertizare",d:"Zonă cu școli, grădinițe sau locuri de joacă. Copiii pot apărea brusc pe carosabil.",svg:tri('<g fill="#1D2023"><circle cx="-8" cy="-14" r="4"/><path d="M-11-9h6l2 10-3 1-1 9h-3l-1-9-3-1z"/><circle cx="8" cy="-10" r="3.5"/><path d="M5-5h6l2 9-3 1v7h-3v-7l-3-1z"/></g>')},
+  {n:"Accesul interzis",c:"Interzicere",d:"Nu ai voie să intri pe acest drum din acest sens, cu niciun vehicul.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#C8102E"/><rect x="20" y="42" width="60" height="16" fill="#fff"/></svg>'},
+  {n:"Limită de viteză 50 km/h",c:"Interzicere",d:"Nu ai voie să depășești 50 km/h de la acest indicator.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#fff" stroke="#C8102E" stroke-width="10"/><text x="50" y="63" text-anchor="middle" font-family="Overpass,Arial" font-weight="900" font-size="36" fill="#1D2023">50</text></svg>'},
+  {n:"Accesul interzis pietonilor",c:"Interzicere",d:"Pietonii nu au voie să circule pe această porțiune.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#fff" stroke="#C8102E" stroke-width="10"/><g transform="translate(50,55) scale(1.25)">'+PED+'</g></svg>'},
+  {n:"Oprirea interzisă",c:"Interzicere",d:"Nu ai voie să oprești vehiculul pe acea parte a drumului, nici pentru scurt timp.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#1F5FAE" stroke="#C8102E" stroke-width="10"/><path d="M22 22L78 78M78 22L22 78" stroke="#C8102E" stroke-width="10"/></svg>'},
+  {n:"Sens giratoriu",c:"Obligare",d:"Circulația se face în jurul sensului giratoriu, în sensul indicat de săgeți.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#1F5FAE"/><g fill="none" stroke="#fff" stroke-width="7"><path d="M34 30a24 24 0 0 1 32 0"/><path d="M74 50a24 24 0 0 1-16 22"/><path d="M42 72a24 24 0 0 1-16-22"/></g><g fill="#fff"><path d="M66 22l8 12-14 0z"/><path d="M52 80l8-14 6 12z"/><path d="M20 44l12 0-6 12z"/></g></svg>'},
+  {n:"Pistă pentru biciclete",c:"Obligare",d:"Drum rezervat bicicletelor. Pietonii și mașinile nu circulă pe el.",svg:'<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="#1F5FAE"/><g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="60" r="12"/><circle cx="70" cy="60" r="12"/><path d="M30 60l12-20h16l12 20M42 40l10 20h18M38 34h10"/></g></svg>'}
+];
+function renderSigns(){
+  $("#signs").innerHTML=SIGNS.map(function(s,i){
+    return '<button class="sign" data-i="'+i+'" aria-label="Indicator '+(i+1)+'. Atinge pentru a afla ce înseamnă"><div class="inner"><div class="face">'+s.svg+'<span class="hint">Ce înseamnă?</span></div><div class="face back"><span class="cat">'+s.c+'</span><h3>'+s.n+'</h3><p>'+s.d+'</p></div></div></button>';
+  }).join("");
+}
+renderSigns();
+$("#signs").addEventListener("click",function(e){var b=e.target.closest(".sign");if(b){b.classList.toggle("flip");b.setAttribute("aria-label",b.classList.contains("flip")?SIGNS[b.dataset.i].n+": "+SIGNS[b.dataset.i].d:"Indicator "+(+b.dataset.i+1)+". Atinge pentru a afla ce înseamnă");}});
+$("#flip-all").addEventListener("click",function(){$$(".sign").forEach(function(b){b.classList.add("flip")})});
+$("#reset-signs").addEventListener("click",function(){$$(".sign").forEach(function(b){b.classList.remove("flip")})});
+
+/* ---------- scenarii ---------- */
+function scene(parts){return '<svg viewBox="0 0 400 300" aria-hidden="true"><rect width="400" height="300" fill="#6FA35C"/>'+parts+'</svg>';}
+var ROAD_H='<rect y="90" width="400" height="130" fill="#3A3F44"/><rect y="60" width="400" height="30" fill="#B9BDB5"/><rect y="220" width="400" height="30" fill="#B9BDB5"/><g fill="#F4F4F0">'+[0,80,160,240,320].map(function(x){return '<rect x="'+(x+10)+'" y="152" width="44" height="5"/>'}).join("")+'</g>';
+var CAR=function(x,y,c,flip){return '<g transform="translate('+x+','+y+')'+(flip?' scale(-1,1)':'')+'"><rect x="-40" y="-18" width="80" height="36" rx="9" fill="'+c+'"/><rect x="6" y="-13" width="20" height="26" rx="4" fill="#9CC3E6"/><rect x="-30" y="-13" width="14" height="26" rx="4" fill="#9CC3E6"/></g>';};
+var KID=function(x,y,c){return '<g transform="translate('+x+','+y+')"><circle r="11" fill="'+(c||"#F2B705")+'" stroke="#1D2023" stroke-width="3"/><circle cy="-1" r="5" fill="#6B4B2A"/></g>';};
+var SCEN=[
+  {who:"Copil",q:"Te joci cu mingea lângă bloc și mingea se rostogolește în stradă, printre mașinile parcate. Ce faci?",
+   art:scene(ROAD_H+CAR(70,110,"#8A9199")+CAR(170,110,"#C9A227")+'<circle cx="235" cy="135" r="9" fill="#EF4A5E" stroke="#fff" stroke-width="2"/>'+KID(220,70)+CAR(360,185,"#1F5FAE",true)),
+   o:[["Fug repede după ea, înainte să o lovească o mașină.",0,"Periculos! Printre mașinile parcate șoferii nu te văd, iar tu nu vezi mașinile care vin. Aceasta este una dintre cele mai frecvente situații în care sunt loviți copii."],
+      ["Rămân pe trotuar și chem un adult să o aducă.",1,"Corect. O minge se poate înlocui, un copil nu. Adultul se uită în ambele părți și o recuperează în siguranță."],
+      ["Strig la mașini să oprească și apoi mă duc după ea.",0,"Șoferii nu te aud prin geamurile închise și nu pot opri pe loc. Rămâi pe trotuar și cheamă un adult."]]},
+  {who:"Pieton",q:"Ajungi la trecere exact când omulețul verde începe să clipească. Ce faci?",
+   art:scene(ROAD_H+'<g fill="#F4F4F0">'+[100,120,140,160,180,200].map(function(y){return ''}).join("")+[0,1,2,3,4].map(function(i){return '<rect x="160" y="'+(100+i*24)+'" width="80" height="14"/>'}).join("")+'</g>'+'<rect x="250" y="20" width="26" height="46" rx="5" fill="#15181A"/><circle cx="263" cy="32" r="8" fill="#422"/><circle cx="263" cy="54" r="8" fill="#3FBF76"/>'+KID(200,74,"#fff")+CAR(60,185,"#C8102E")),
+   o:[["Alerg ca să apuc să trec.",0,"Verdele intermitent anunță că urmează roșu. Dacă alergi poți cădea pe carosabil, iar mașinile pornesc imediat ce primesc verde."],
+      ["Aștept următorul verde.",1,"Corect. Verdele intermitent înseamnă: cine e deja pe trecere termină traversarea, cine n-a pornit așteaptă."],
+      ["Trec încet, oricum mașinile trebuie să mă aștepte.",0,"Doar cine este deja pe trecere își termină traversarea. Pornit pe verde intermitent, riști să rămâi pe carosabil la roșu."]]},
+  {who:"Șofer",q:"Conduci pe o stradă cu mașini parcate pe dreapta, lângă o școală. O minge sare pe carosabil dintre mașini. Ce faci?",
+   art:scene(ROAD_H+CAR(90,110,"#8A9199")+CAR(190,110,"#6B8E23")+CAR(290,110,"#8A9199")+'<circle cx="236" cy="140" r="9" fill="#EF4A5E" stroke="#fff" stroke-width="2"/>'+CAR(80,185,"#1F5FAE")+'<g transform="translate(345,40)"><path d="M0-26L24 16H-24z" fill="#fff" stroke="#C8102E" stroke-width="5" stroke-linejoin="round"/></g>'),
+   o:[["Ocolesc mingea și merg mai departe.",0,"După minge vine aproape întotdeauna un copil. Dacă doar ocolești, s-ar putea să nu mai ai timp să frânezi când apare."],
+      ["Frânez și mă aștept să apară un copil după ea.",1,"Corect. Mingea este semnalul. Încetinește până aproape de oprire și privește printre mașinile parcate."],
+      ["Claxonez ca să aud dacă e cineva acolo.",0,"Claxonul nu oprește un copil care aleargă după minge. Doar viteza redusă îți dă timp să oprești."]]},
+  {who:"Trotinetă",q:"Mergi cu trotineta electrică și pe stradă nu există pistă. Trotuarul e liber. Pe unde mergi?",
+   art:scene(ROAD_H+'<g transform="translate(200,75)"><rect x="-16" y="-3" width="32" height="6" rx="3" fill="#1D2023"/><rect x="10" y="-26" width="4" height="24" fill="#1D2023"/><circle cx="-12" cy="5" r="5" fill="#1D2023"/><circle cx="12" cy="5" r="5" fill="#1D2023"/></g>'+KID(196,52,"#3FBF76")+KID(300,74,"#fff")+CAR(90,185,"#C8102E")),
+   o:[["Pe trotuar, e mai sigur pentru mine.",0,"Trotinetele electrice nu au voie pe trotuar. Acolo pui în pericol pietonii, mai ales copiii și vârstnicii."],
+      ["Pe carosabil, cât mai aproape de marginea din dreapta, cu cască.",1,"Corect. Fără pistă, mergi pe dreapta carosabilului. Casca și luminile te protejează și te fac vizibil."],
+      ["Pe mijlocul benzii, ca să mă vadă mașinile.",0,"Pe mijlocul benzii îi obligi pe șoferi la depășiri riscante. Stai cât mai pe dreapta."]]},
+  {who:"Pieton",q:"Seara te întorci pe jos acasă, pe un drum între sate, fără trotuar și fără iluminat. Cum mergi?",
+   art:'<svg viewBox="0 0 400 300" aria-hidden="true"><rect width="400" height="300" fill="#0B0D10"/><rect y="100" width="400" height="120" fill="#1A1D20"/><g fill="#5A5F64">'+[0,80,160,240,320].map(function(x){return '<rect x="'+(x+10)+'" y="158" width="44" height="4"/>'}).join("")+'</g><polygon points="330,185 90,150 90,225" fill="#FFF6C8" opacity=".18"/>'+CAR(360,190,"#3A4046",true)+KID(120,118,"#F2B705")+'<path d="M108 118h24" stroke="#fff" stroke-width="3"/></svg>',
+   o:[["Pe partea dreaptă, cu spatele la mașini.",0,"Așa nu vezi mașinile care vin din spate și nu te poți feri. Pe drumuri fără trotuar se merge pe stânga."],
+      ["Pe marginea din stânga, cu fața spre mașini, cu ceva reflectorizant.",1,"Corect. Vezi farurile din timp, iar vesta sau banda reflectorizantă te face vizibil de la aproximativ 150 m."],
+      ["Pe mijlocul drumului, e mai bine luminat de faruri.",0,"Pe mijlocul drumului ești exact în calea mașinilor. Mergi pe marginea din stânga, cât mai departe de carosabil."]]},
+  {who:"Șofer",q:"Ești la volan pe bulevard și îți sună telefonul. Este un apel important de la serviciu. Ce faci?",
+   art:scene(ROAD_H+CAR(120,185,"#1F5FAE")+CAR(280,120,"#8A9199",true)+'<g transform="translate(200,40)"><rect x="-14" y="-24" width="28" height="48" rx="5" fill="#15181A"/><rect x="-10" y="-18" width="20" height="32" fill="#5B93DB"/></g>'),
+   o:[["Răspund scurt, ținând telefonul în mână.",0,"Este interzis și periculos. Cu telefonul în mână reacționezi mult mai lent, iar atenția ta nu mai e pe drum."],
+      ["Răspund doar prin sistemul hands-free sau opresc regulamentar și sun înapoi.",1,"Corect. Niciun apel nu e mai important decât drumul. Dacă nu ai hands-free, oprește acolo unde ai voie."],
+      ["Citesc repede cine a sunat și scriu un mesaj că revin.",0,"Un mesaj scris durează câteva secunde. La 50 km/h asta înseamnă zeci de metri fără să privești drumul."]]}
+];
+var si=0,answers={};
+function renderScen(){
+  var s=SCEN[si],a=answers[si];
+  $("#scen-art").innerHTML=s.art;
+  var h='<span class="who-tag">'+s.who+' · '+(si+1)+' din '+SCEN.length+'</span><h3 style="font-size:1.3rem">'+s.q+'</h3><div class="opts">';
+  s.o.forEach(function(o,i){
+    var cls="opt";if(a!=null){if(o[1])cls+=" good";else if(i===a)cls+=" bad";}
+    h+='<button class="'+cls+'" data-i="'+i+'"'+(a!=null?' disabled':'')+'>'+o[0]+'</button>';
+  });
+  h+='</div>';
+  if(a!=null){var o=s.o[a];h+='<div class="fb" role="status"><b style="color:'+(o[1]?'var(--green)':'var(--red)')+'">'+(o[1]?'Alegere bună':'Atenție')+'</b>'+o[2]+'</div>';}
+  $("#scen-body").innerHTML=h;
+  $("#scen-pips").innerHTML=SCEN.map(function(_,i){return '<i class="'+(i<=si?'on':'')+'"></i>'}).join("");
+  $("#scen-prev").disabled=si===0;
+  $("#scen-next").textContent=si===SCEN.length-1?"De la început":"Următoarea →";
+}
+$("#scen-body").addEventListener("click",function(e){var b=e.target.closest(".opt");if(!b||b.disabled)return;answers[si]=+b.dataset.i;renderScen();});
+$("#scen-prev").addEventListener("click",function(){if(si>0){si--;renderScen();}});
+$("#scen-next").addEventListener("click",function(){if(si<SCEN.length-1)si++;else{si=0;answers={};}renderScen();});
+renderScen();
+
+/* ---------- test ---------- */
+var Q=[
+  {q:"Care este viteza maximă pentru un autoturism în localitate, dacă nu există alt indicator?",o:["30 km/h","50 km/h","70 km/h"],c:1,e:"În localități limita generală este 50 km/h. Indicatoarele pot impune o limită mai mică, de exemplu 30 km/h lângă școli."},
+  {q:"Ce înseamnă acest indicator?",sign:0,o:["Oprire obligatorie","Cedează trecerea","Atenție, pericol"],c:1,e:"Triunghiul cu vârful în jos înseamnă „Cedează trecerea”: lași să treacă vehiculele de pe drumul în care intri."},
+  {q:"Pe ce parte a drumului merge un pieton în afara localității, unde nu există trotuar?",o:["Pe partea dreaptă","Pe partea stângă, cu fața spre mașini","Pe mijlocul drumului"],c:1,e:"Mergând pe stânga, vezi mașinile care vin spre tine și te poți feri la timp."},
+  {q:"Care a fost cea mai frecventă cauză a accidentelor grave din România în 2025?",o:["Traversarea neregulamentară a pietonilor","Defecțiunile tehnice","Ceața"],c:0,e:"Traversarea prin locuri nepermise a fost prima cauză (16,1%), urmată de viteza neadaptată (15,3%)."},
+  {q:"Cam câți metri îi trebuie unei mașini să oprească de la 50 km/h, pe drum uscat, inclusiv timpul de reacție?",o:["Aproximativ 10 m","Aproximativ 28 m","Aproximativ 60 m"],c:1,e:"Aproape 14 m parcurși până reacționează șoferul și încă aproape 14 m de frânare. Pe drum ud distanța crește."},
+  {q:"De la ce vârstă ai voie să mergi cu bicicleta pe drumurile publice?",o:["10 ani","12 ani","14 ani"],c:2,e:"Codul rutier cere vârsta minimă de 14 ani pentru a conduce bicicleta pe drumurile publice."},
+  {q:"Ce înseamnă acest indicator?",sign:6,o:["Accesul interzis","Oprirea interzisă","Drum închis pentru reparații"],c:0,e:"Cercul roșu cu bară albă orizontală interzice accesul oricărui vehicul din acel sens."},
+  {q:"Ce îmbrăcăminte te face cel mai vizibil noaptea, pe un drum neluminat?",o:["Haine negre","Haine colorate","Vestă sau benzi reflectorizante"],c:2,e:"Materialele reflectorizante trimit lumina farurilor înapoi spre șofer. Ești vizibil de la aproximativ 150 m, față de circa 25 m în haine închise."},
+  {q:"Pe unde are voie să circule o trotinetă electrică?",o:["Pe trotuar, dacă e liber","Pe pista pentru biciclete sau pe marginea din dreapta a carosabilului","Oriunde, dacă merge încet"],c:1,e:"Trotinetele electrice nu au voie pe trotuar. Se folosește pista pentru biciclete sau marginea din dreapta a drumului."},
+  {q:"Ce cantitate de alcool are voie să consume un șofer înainte să conducă?",o:["Un pahar de vin","O bere mică","Deloc"],c:2,e:"În România toleranța este zero. Peste 0,80 g/l alcool în sânge este infracțiune."}
+];
+var qi=0,score=0,picked=null;
+function renderQuiz(){
+  var box=$("#quiz");
+  if(qi>=Q.length){
+    var msg=score>=9?"Excelent! Ești un exemplu în trafic.":score>=7?"Foarte bine! Mai recitește regulile la care ai greșit.":score>=5?"Bun început. Parcurge din nou regulile și scenariile.":"Mai ai de învățat. Reia secțiunea cu regulile și încearcă din nou.";
+    box.innerHTML='<div class="result"><div class="eyebrow">Rezultatul tău</div><div class="big">'+score+' / '+Q.length+'</div><p>'+msg+'</p><button class="btn" id="q-again">Încearcă din nou</button></div>';
+    $("#q-again").addEventListener("click",function(){qi=0;score=0;picked=null;renderQuiz();});return;
+  }
+  var q=Q[qi];
+  var h='<div class="q-top"><span class="eyebrow">Întrebarea '+(qi+1)+' din '+Q.length+'</span><span class="eyebrow">Scor: '+score+'</span></div><div class="q-prog"><div style="width:'+(qi/Q.length*100)+'%"></div></div>';
+  if(q.sign!=null) h+='<div class="q-sign">'+SIGNS[q.sign].svg+'</div>';
+  h+='<div class="q-text">'+q.q+'</div><div class="opts">';
+  q.o.forEach(function(o,i){var cls="opt";if(picked!=null){if(i===q.c)cls+=" good";else if(i===picked)cls+=" bad";}h+='<button class="'+cls+'" data-i="'+i+'"'+(picked!=null?' disabled':'')+'>'+o+'</button>';});
+  h+='</div>';
+  if(picked!=null){h+='<div class="fb" role="status" style="margin-top:12px"><b style="color:'+(picked===q.c?'var(--green)':'var(--red)')+'">'+(picked===q.c?'Corect!':'Nu chiar.')+'</b>'+q.e+'</div><div style="margin-top:14px"><button class="btn" id="q-next">'+(qi===Q.length-1?'Vezi rezultatul':'Următoarea întrebare →')+'</button></div>';}
+  box.innerHTML=h;
+  $$(".opt",box).forEach(function(b){b.addEventListener("click",function(){if(picked!=null)return;picked=+b.dataset.i;if(picked===q.c)score++;renderQuiz();});});
+  var n=$("#q-next");if(n)n.addEventListener("click",function(){qi++;picked=null;renderQuiz();});
+}
+renderQuiz();
+
+/* ---------- video ---------- */
+function thumb(kind){
+  var bg='<rect width="160" height="90" fill="#3A3F44"/>';
+  if(kind==="police") return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice">'+bg+'<rect x="0" y="0" width="80" height="6" fill="#1F5FAE"/><rect x="80" y="0" width="80" height="6" fill="#C8102E"/><text x="12" y="80" fill="#fff" font-family="Overpass,Arial" font-weight="900" font-size="11">POLIȚIA ROMÂNĂ</text></svg>';
+  if(kind==="kids") return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice">'+bg+'<g fill="#F4F4F0">'+[0,1,2,3,4,5,6].map(function(i){return '<rect x="'+(8+i*22)+'" y="60" width="14" height="30"/>'}).join("")+'</g></svg>';
+  if(kind==="truck") return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice">'+bg+'<rect x="20" y="30" width="80" height="34" fill="#B9BDB5"/><rect x="100" y="38" width="26" height="26" rx="4" fill="#F2B705"/><polygon points="126,50 160,20 160,90" fill="#EF4A5E" opacity=".35"/></svg>';
+  if(kind==="night") return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice"><rect width="160" height="90" fill="#0B0D10"/><polygon points="10,50 150,30 150,80" fill="#FFF6C8" opacity=".2"/><rect x="118" y="44" width="10" height="20" fill="#F2B705"/></svg>';
+  if(kind==="eu") return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice"><rect width="160" height="90" fill="#1F4E9A"/><g fill="#F5C125">'+Array.from({length:12},function(_,i){var a=i/12*Math.PI*2;return '<circle cx="'+(80+Math.cos(a)*26)+'" cy="'+(45+Math.sin(a)*26)+'" r="3"/>'}).join("")+'</g></svg>';
+  return '<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice">'+bg+'<circle cx="50" cy="55" r="14" fill="none" stroke="#fff" stroke-width="3"/><circle cx="110" cy="55" r="14" fill="none" stroke="#fff" stroke-width="3"/></svg>';
+}
+var VIDS=[
+  {k:"police",tag:"Sursă oficială",t:"Poliția Română pe YouTube",d:"Canalul oficial: campanii de prevenire, clipuri despre pietoni, viteză și alcool la volan.",u:"https://www.youtube.com/@PolitiaRomanaOfficial"},
+  {k:"police",tag:"Sursă oficială",t:"Campaniile de prevenire ale Poliției",d:"Materialele de informare publicate de Poliția Română, inclusiv cele de educație rutieră.",u:"https://www.politiaromana.ro/ro/comunicate/campanii-de-prevenire-si-informare-ale-politiei-romane"},
+  {k:"kids",tag:"Căutare pregătită",t:"Educație rutieră pentru copii",d:"Desene animate și clipuri pentru preșcolari și școlari, în limba română.",u:"https://www.youtube.com/results?search_query=educatie+rutiera+pentru+copii"},
+  {k:"truck",tag:"Căutare pregătită",t:"Unghiul mort al camionului",d:"De ce un șofer de camion nu vede bicicliștii și pietonii de lângă el.",u:"https://www.youtube.com/results?search_query=unghiul+mort+camion+biciclist"},
+  {k:"night",tag:"Căutare pregătită",t:"Pietoni vizibili noaptea",d:"Demonstrații cu haine închise, deschise și reflectorizante în lumina farurilor.",u:"https://www.youtube.com/results?search_query=vizibilitate+pieton+noaptea+vesta+reflectorizanta"},
+  {k:"eu",tag:"Sursă oficială",t:"Siguranța rutieră în UE",d:"Date și campanii ale Comisiei Europene despre siguranța rutieră.",u:"https://transport.ec.europa.eu/transport-themes/road-safety_en"}
+];
+$("#vids").innerHTML=VIDS.map(function(v){return '<a class="vid" href="'+v.u+'" target="_blank" rel="noopener"><div class="thumb">'+thumb(v.k)+'<span class="play" aria-hidden="true"></span></div><div class="meta"><span class="tag">'+v.tag+'</span><h3>'+v.t+'</h3><p>'+v.d+'</p></div></a>';}).join("");
+
+})();
+</script>
+
+</body>
+</html>
